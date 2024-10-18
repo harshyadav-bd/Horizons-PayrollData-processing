@@ -1,1 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .burden-mapping {
+        margin-bottom: 15px;
+      }
+      .burden-mapping label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      .burden-mapping select {
+        width: 100%;
+        padding: 5px;
+      }
+      #submit-btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      #submit-btn:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <h2><?= promptTitle ?></h2>
+    <p><?= promptDescription ?></p>
+    <form id="mapping-form">
+      <? for (var i = 0; i < burdens.length; i++) { ?>
+        <div class="burden-mapping">
+          <label for="burden-<?=i?>"><?=burdens[i]?>:</label>
+          <select id="burden-<?=i?>" name="<?=burdens[i]?>">
+            <option value="Skip">-- Skip --</option>
+            <? for (var j = 0; j < masterHeaders.length; j++) { ?>
+              <option value="<?=masterHeaders[j]?>"><?=masterHeaders[j]?></option>
+            <? } ?>
+          </select>
+        </div>
+      <? } ?>
+      <button type="button" id="submit-btn">Submit Mapping</button>
+    </form>
+    
+    <script>
+      document.getElementById('submit-btn').addEventListener('click', function() {
+        const form = document.getElementById('mapping-form');
+        const formData = new FormData(form);
+        const mapping = {};
 
+        formData.forEach((value, key) => {
+          mapping[key] = value;
+        });
+
+        google.script.run
+          .withSuccessHandler(function() {
+            google.script.host.close();
+          })
+          .processMapping(mapping);
+      });
+    </script>
+  </body>
+</html>
